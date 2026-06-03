@@ -1,14 +1,18 @@
-import { Body, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Body, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { User, UserDocument } from 'src/user/schemas/user.schema';
-import { UserRepository } from 'src/user/schemas/userRepo';
+import { UserRepository } from '../schemas/userRepo';
 import { UserDto } from '../dto/user.dto';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
 import { UpdatePasswordDto } from '../dto/updatePasswordDto';
+import { hash } from 'crypto';
+import { LoginDto } from '../dto/loginDto';
+import { UpdateUserDto } from '../dto/updatedataDto';
+import { AdminDto } from '../../admin/dto/admindto';
 
 @Injectable()
 export class UserService {
-    constructor(private readonly userRepo: UserRepository, private jwtService: JwtService )
+    constructor(private readonly userRepo: UserRepository, private jwtService: JwtService)
     { }
 
 
@@ -22,16 +26,24 @@ export class UserService {
 
     }
 
-    async signupUser(email: string, password: string) {
+
+    async signupUser(body: UserDto) {
 
         // let data = {...data, userinfo}
         try {
-            const userExist = await this.userRepo.findByEmail(email);
+            const userExist = await this.userRepo.findByEmail(body.email);
+            console.log(userExist)
             if (userExist) {
                 throw new ConflictException("User already exists, go to login")
             }
-            const hash = await bcrypt.hash(password, 10)
-            const userinfo = await this.userRepo.create({ email, password: hash })
+            const hash = await bcrypt.hash(body.password, 10)
+            console.log("signup hashed", hash)
+            const userinfo = await this.userRepo.create({ email: body.email, password: hash, phoneno: body.phoneNo, address: body.address, age: body.age, city: body.city })
+            userinfo.save()
+            const user = await userinfo.toObject()
+            // console.log(user)
+            // delete user.password && delete  user._id
+
             const message = "user created"
             
             return { userinfo, message }
@@ -45,26 +57,30 @@ export class UserService {
         }
     }
 
-
-    async loginUser(data: UserDto): Promise<{access_token: string, user: UserDocument}> {
+    async loginUser(data: LoginDto): Promise<{ access_token: string, user: UserDocument}> {
         try {
-            console.log(data)
-
             const userExists = await this.userRepo.findByEmail(data.email);
-            // console.log({ userExists })
+            console.log("userExists", userExists)
+            console.log("data", data)
             if (!userExists) {
                 throw new NotFoundException("user not found, register first")
             }
+            const hash = await bcrypt.hash(data.password, 10)
+            console.log("hashed pass", hash)
             // console.log("check this line")
-            if (userExists.password !== data.password) {
-                throw new NotFoundException("wrong password")
-
+            // const hash = await bcrypt.hash(data.password, 10)
+            const isMatch = await bcrypt.compare(hash, userExists.password)
+            if (!isMatch) {
+                throw new UnauthorizedException("wrong password")
             }
-            // const user = await this.userRepo.findById(data._id)
-            const payload = { sub: userExists._id};
-            console.log("service payload",{payload})
+            // const userData = userExists.toObject()
+            const payload = { user: userExists};
+            const access_token = await this.jwtService.signAsync(payload)
+            // delete userData.password && delete userData._id
+            
+            
             return {
-                access_token: await this.jwtService.signAsync(payload),
+                access_token,
                 user: userExists,
             };
         }
@@ -77,38 +93,90 @@ export class UserService {
 
     }
 
-    async getProfile(id: string) {
-  const user = await this.userRepo.findById(id);
-  if (!user) {
+    async getProfile(email: string) {
+  const profile = await this.userRepo.findByEmail(email)
+  console.log( profile)
+  if (!profile) {
     throw new NotFoundException('User not found');
   }
-  const newUser = user.toObject();
-  delete newUser.password;
-  return newUser;
+//   const userProfile = profile.toObject()
+//   delete userProfile.password && userProfile._id
+//   return userProfile
 }
 
-    async updatePassword( _id: string, body: UpdatePasswordDto   ){
+    async updateUserData( _id: string,  body: UpdateUserDto) {
         try{
-        const user = await this.userRepo.findByIdAndUpdate(_id)
-        console.log("service me user kia haii?:", user);
-        const message = "password updated successfully"
-        if(!user){
-            throw new NotFoundException('User not found')
-            }
-            
-        if(user.password !== body.currentpassword){
-            throw new UnauthorizedException('Current password is incorrect')
-        }
-        user.password = body.newpassword
-        await user.save()
-            
-            return { message}
+            const { email, phoneNo, address, age, city } = body
+        const userdata = {}
 
+        
+        if(email){
+           userdata['email'] =  body.email 
+        }
+        if(phoneNo){
+           userdata['phoneNo'] =  body.phoneNo 
+        }
+        if(address){
+            userdata['address'] = body.address
+        }
+        if(age){
+            userdata['age'] = body.age
+        }
+        if(city){
+            userdata['city']= body.city
+        }
+        
+
+
+
+//   const plainUpdate = { ...body };
+  console.log("bodyData", body)
+  const updatedUser = await this.userRepo.findByIdAndUpdate(_id, userdata)
+  
+
+  if (!updatedUser) {
+    throw new NotFoundException('User not found');
+  }
+        
+    return updatedUser
         }catch (error){
     throw error}
     }
+
+    
+    async UpdatePassword(id: string, body: UpdatePasswordDto){
+
+        try{
+        const user = await this.userRepo.findByIID(id)
+        console.log("user", user)
+        const message = "password updated successfully"
+        let hash = await bcrypt.hash(user.password, 10)
+        console.log("hshd pass", hash)
+        console.log("body pass", body.currentpassword)
+        const isMatch = await bcrypt.compare(hash, body.currentpassword)
+        if(!isMatch){
+            throw new UnauthorizedException('Current password is incorrect')
+        }
+         hash = body.newpassword 
+         
+        await user.save()
+        // const userData = user.toObject()
+        // delete userData.password
+        return {user, message}
+        }catch(error){
+            throw error
+        }
+        
+
+
+
+}
 }
 
+
+
+
+//user.password = body.password
 
 
     // return {userExist,checkPassword }

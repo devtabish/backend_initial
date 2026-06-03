@@ -1,4 +1,4 @@
-import {  IsArray, IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import {  IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 
 
@@ -9,10 +9,22 @@ export class UserDto{
 
     @IsString()
     password: string
-    
-    @IsOptional()
+
     @IsString()
-    _id: string
+    @IsNotEmpty()
+    phoneNo: string
+
+    @IsString()
+    @IsNotEmpty()
+    address: string
+
+    @IsString()
+    @IsOptional()
+    age: string
+
+    @IsString()
+    @IsOptional()
+    city: string
 
 
 }

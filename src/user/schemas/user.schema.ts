@@ -3,7 +3,7 @@ import mongoose, { HydratedDocument, Document } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
-@Schema({ timestamps: true, versionKey: false })
+@Schema({ timestamps: false, versionKey: false })
 export class User extends Document {
     @Prop({required:true, unique:true})
     email: string;
@@ -12,10 +12,19 @@ export class User extends Document {
     password: string;
 
     @Prop()
-    newpassword: string
+    id: string;
+
+    @Prop({required:true})
+    phoneno: string
+
+    @Prop({required: true})
+    address: string
 
     @Prop()
-    id: string;
+    age: string
+
+    @Prop()
+    city: string
 
 }
 

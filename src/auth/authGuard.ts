@@ -9,12 +9,10 @@ export class AuthGuard implements CanActivate {
     constructor(private readonly jwtService: JwtService, private reflector: Reflector){}
   async canActivate(
     context: ExecutionContext):  Promise<boolean> {
-    console.log("auth guard is running")
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
      context.getClass(),
     ]);
-    console.log({isPublic})
     if(isPublic){
         return true;
     }
@@ -25,10 +23,9 @@ export class AuthGuard implements CanActivate {
     }
     try{
         const payload = await this.jwtService.verifyAsync(token)
-        console.log("payload is running",{payload})
         request['user'] = payload
     }catch{
-        throw new UnauthorizedException("token given")
+        throw new UnauthorizedException()
     }
      return true;
   }
