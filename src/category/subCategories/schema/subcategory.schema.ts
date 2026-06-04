@@ -7,13 +7,10 @@ export type SubCategoryDocument = HydratedDocument<SubCategory>;
 @Schema({ timestamps: false, versionKey: false })
 export class SubCategory extends Document {
     @Prop({required:true, unique:true})
-    category_name: string;
-
-    @Prop()
-    subcategoryid: string
+    sub_category_name: string;
 
      @Prop({ type: Types.ObjectId, ref: 'Category', required: true })
-  category: Types.ObjectId;
+  categoryId: Types.ObjectId;
 
 }
 export const SubCategorySchema = SchemaFactory.createForClass(SubCategory);

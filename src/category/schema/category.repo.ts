@@ -4,17 +4,18 @@ import { Category } from "./category.schema";
 import { CategoryDocument } from "./category.schema";
 import { HydratedDocument, Model } from "mongoose";
 import { CategoryDto } from "../dto/category.dto";
+import { find } from "rxjs";
 
 
 @Injectable()
 export class CategoryRepository 
  {
-constructor(@InjectModel(Category.name) private categoryModel: Model<CategoryDocument>){}
+constructor(@InjectModel(Category.name) private categoryModel: Model<CategoryDocument>){ }
 
-  async create(createCategoryData: Partial<CategoryDocument>): Promise<HydratedDocument<CategoryDocument>>{
-    const newCategory = await this.categoryModel.create(createCategoryData)
+  async create(data: CategoryDto): Promise<CategoryDocument> {
+    const newCategory = new this.categoryModel(data)
 
-    return newCategory;
+    return await newCategory.save();
 }
 
 async findCategory(id: string): Promise<CategoryDocument>{
@@ -31,8 +32,14 @@ async findall(): Promise<CategoryDocument[]>{
     return await this.categoryModel.find().exec()
 }
 
-async findone(name: CategoryDto): Promise<CategoryDocument | null>{
-    return await this.categoryModel.findById(name).exec()
+async findone(_id: string): Promise<CategoryDocument>{
+    const getCat =  await this.categoryModel.findOne({_id: _id})
+    console.log("finddddddd", getCat)
+    return getCat
 }
 
+async findByName(name: string): Promise<CategoryDocument | null> {
+  // Use whatever field name matches your schema (e.g., categoryName)
+  return await this.categoryModel.findOne({  name: name }).exec();
+}
 }

@@ -15,7 +15,7 @@ export class CategoryController {
     @Post('addCategory')
     addCategory(@Body() body: CategoryDto){
         console.log(body)
-        return this.categoryService.addCategory(body)
+        return this.categoryService.addCategory( body)
     }
 
     @Get()

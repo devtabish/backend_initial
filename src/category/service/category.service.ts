@@ -10,18 +10,23 @@ import { NotFoundError } from "rxjs";
 @Injectable()
 export class CategoryService {
     constructor(private readonly categoryRepo: CategoryRepository)
-    { }
+    {}
 
-    async addCategory( body: CategoryDto){
-       
-             const findCategory = await this.categoryRepo.findone(body)
+    async addCategory(  body: CategoryDto){
+        try{
+            const findCategory = await this.categoryRepo.findByName(body.name)
              console.log("findcategory",findCategory)
-       if(findCategory.id === body.id){
+       if(findCategory){
         throw new ConflictException("This category already exists, try other one")
        }  
         const categoryInfo = await this.categoryRepo.create(body)
        
         return categoryInfo
+        }catch(error){
+            throw error
+        }
+       
+             
     }
 
     async findall(){

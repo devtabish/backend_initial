@@ -9,21 +9,42 @@ import { SubCategoryDto } from "../dto/subcategory.dto";
 @Injectable()
 export class SubCategoryRepository 
  {
-constructor(@InjectModel(SubCategory.name) private categoryModel: Model<SubCategoryDocument>){}
+constructor(@InjectModel(SubCategory.name) private subcategoryModel: Model<SubCategoryDocument>){}
 
-  async create(id: string, body: SubCategoryDto): Promise<HydratedDocument<SubCategoryDocument>>{
-    const newSubCategory = await this.categoryModel.create({...body,
-        category: new Types.ObjectId(body.category)
-    })
-    return newSubCategory.save();
+
+
+
+async create(data: { sub_category_name: string; categoryId: string }): Promise<SubCategoryDocument> {
+    const newSubCat = new this.subcategoryModel({
+      sub_category_name: data.sub_category_name,
+      categoryId: new Types.ObjectId(data.categoryId), // Safe conversion to Mongo ObjectId
+    });
+    return await newSubCat.save();
+  }
+
+
+  async findByName(name: string): Promise<SubCategoryDocument | null> {
+  return await this.subcategoryModel.findOne({ 
+    sub_category_name: { $regex: new RegExp(`^${name}$`, 'i') } 
+  }).exec();
 }
 
-    async findbycategory(categoryId: string): Promise<SubCategoryDocument[]>{
-        return await this.categoryModel.find({category: new Types.ObjectId(categoryId)}).exec()
-    }
 
     async findbyid(id: string): Promise<SubCategoryDocument>{
-        return await this.categoryModel.findById(id).populate('category').exec()
+        return await this.subcategoryModel.findById({_id: id}).populate('categoryId').exec()
     }
+
+    async findAll(): Promise<SubCategoryDocument[]> {
+    return await this.subcategoryModel.find().populate('categoryId') .exec();
+  }
     }
+
+    // this.subcategoryModel.collection.dropIndex('name_1')
+    //   .then(() => {
+    //     console.log('old index deleted');
+    //   })
+    //   .catch((error) => {
+    // 
+    //     console.log('Index check clean!');
+    //   });
 

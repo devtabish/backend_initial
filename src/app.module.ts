@@ -7,12 +7,13 @@ import {ConfigModule} from '@nestjs/config';
 import { UserMiddleware } from './user/middleware/user.middleware';
 import { AdminModule } from './admin/admin.module';
 import { CategoryModule } from './category/category.module';
+import { SubCategoryModule } from './category/subcategory.module';
 
 
 
 @Module({
   imports: [ConfigModule.forRoot({isGlobal:true,}),
-    MongooseModule.forRoot(process.env.MONGO_URI as string), UserModule,AdminModule,CategoryModule
+    MongooseModule.forRoot(process.env.MONGO_URI as string), UserModule,AdminModule,CategoryModule, SubCategoryModule
 ],
   controllers: [AppController],
   providers: [AppService],

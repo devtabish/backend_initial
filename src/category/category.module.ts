@@ -27,6 +27,7 @@ import { MYJWT_SECRET } from "src/constants";
     useClass: AuthGuard,
   },
 ],
+exports: [CategoryRepository],
     controllers: [CategoryController]
 })
 

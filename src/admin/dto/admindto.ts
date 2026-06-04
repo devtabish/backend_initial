@@ -10,4 +10,5 @@ export class AdminDto{
     @IsString()
     @IsNotEmpty()
     password: string
+
 }

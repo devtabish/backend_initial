@@ -1,19 +1,22 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { SubCategoryService } from "../service/subcategory.service";
 import { SubCategoryDto } from "../dto/subcategory.dto";
+import { SubCategoryIdDto } from "../dto/subcategoryId.dto";
 
 @Controller('sub-categories')
 export class SubCategoryController {
   constructor(private readonly subCategoryService: SubCategoryService) {}
 
-  @Post('/')
-  create( @Param(':id') id: string
-     ,@Body() body: SubCategoryDto) {
-    return this.subCategoryService.Create(id, body);
+ @Post('add/:categoryId') 
+  async addSubCategory(
+    @Param() params: SubCategoryIdDto, 
+    @Body() body: SubCategoryDto
+  ) {
+    return this.subCategoryService.addSubCategory(params.categoryId, body);
   }
 
   @Get('all')
-  getAll(@Param(':id') id: string){
-    return this.subCategoryService.getAll(id)
+  getAll(){
+    return this.subCategoryService.getAll()
   }
 }
