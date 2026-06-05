@@ -1,7 +1,7 @@
 
 import { APP_GUARD } from "@nestjs/core";
 import { AuthGuard } from "src/auth/authGuard";
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { JwtModule } from "@nestjs/jwt";
 import { MYJWT_SECRET } from "src/constants";
@@ -10,16 +10,19 @@ import { SubCategoryRepository } from "./subCategories/schema/subcategory.Repo";
 import { SubCategoryController } from "./subCategories/controller/subcategory.controller";
 import { SubCategoryService } from "./subCategories/service/subcategory.service";
 import { CategoryModule } from "./category.module";
+import { CategorySchema } from "./schema/category.schema";
 
 
 
 @Module({
-    imports:[MongooseModule.forFeature([{name:'SubCategory', schema: SubCategorySchema}]),
+    imports:[MongooseModule.forFeature([{name:'SubCategory', schema: SubCategorySchema,},
+      {name:'Category', schema: CategorySchema}
+    ]),
     JwtModule.register({ 
             global : true,
             secret: MYJWT_SECRET.secret
         
-    }), CategoryModule
+    }), forwardRef(()=> CategoryModule)
 ],
     
     providers: [SubCategoryService, SubCategoryRepository,
@@ -29,6 +32,7 @@ import { CategoryModule } from "./category.module";
     useClass: AuthGuard,
   },
 ],
+exports: [SubCategoryRepository],
     controllers: [SubCategoryController]
 })
 

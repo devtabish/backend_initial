@@ -108,7 +108,6 @@ export class UserService {
         try{
             const { email, phoneNo, address, age, city } = body
         const userdata = {}
-
         
         if(email){
            userdata['email'] =  body.email 
@@ -125,9 +124,6 @@ export class UserService {
         if(city){
             userdata['city']= body.city
         }
-        
-
-
 
 //   const plainUpdate = { ...body };
   console.log("bodyData", body)
