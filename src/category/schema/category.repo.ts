@@ -5,6 +5,7 @@ import { CategoryDocument } from "./category.schema";
 import { HydratedDocument, Model } from "mongoose";
 import { CategoryDto } from "../dto/category.dto";
 import { find } from "rxjs";
+import { SubCategoryDocument } from "../subCategories/schema/subcategory.schema";
 
 
 @Injectable()
@@ -28,8 +29,12 @@ async findbyid(id: string): Promise<CategoryDocument | null>{
     return await this.categoryModel.findById(id).exec()
 }
 
+async findbyidanddelete(id: string): Promise<CategoryDocument | null>{
+    return await this.categoryModel.findOneAndDelete({_id:id}).exec()
+}
+
 async findall(): Promise<CategoryDocument[]>{
-    return await this.categoryModel.find().exec()
+    return await this.categoryModel.find().populate('subCategories').exec()
 }
 
 async findone(_id: string): Promise<CategoryDocument>{
@@ -38,8 +43,10 @@ async findone(_id: string): Promise<CategoryDocument>{
     return getCat
 }
 
-async findByName(name: string): Promise<CategoryDocument | null> {
-  // Use whatever field name matches your schema (e.g., categoryName)
-  return await this.categoryModel.findOne({  name: name }).exec();
+ async findByName(name: string): Promise<CategoryDocument | null> {
+  return await this.categoryModel.findOne({ 
+    name: { $regex: new RegExp(`^${name}$`, 'i') } 
+  }).exec();
 }
+
 }

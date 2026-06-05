@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Param, Post, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Request, UseGuards } from "@nestjs/common";
 import { CategoryService } from "../service/category.service";
 import { Public } from "src/customkey";
 import { CategoryDto } from "../dto/category.dto";
 import { AuthGuard } from "src/auth/authGuard";
+import { CategoryIdDto } from "../dto/CategoryId.dto";
 
 
 
@@ -23,10 +24,11 @@ export class CategoryController {
         return this.categoryService.findall()
     }
 
-    @Get(':id')
-    findone(@Param('id') id: string){
-        return this.categoryService.findone(id)
+    @Delete('delete/:categoryId')
+    dletCategory(@Param() params: CategoryIdDto){
+        return this.categoryService.deleteCategory(params.categoryId)
     }
+
     
 
 }
