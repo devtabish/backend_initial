@@ -11,6 +11,7 @@ import { UpdatePasswordDto } from '../dto/updatePasswordDto';
 import { Roles } from 'src/Roles/roles.decorator';
 import { RolesGuard } from 'src/Roles/roles.guard';
 import { Role } from 'src/Roles/role.enum';
+import { ReqField } from 'src/auth/auth.decorator';
 
 @Controller('user')
 export class UserController {
@@ -36,14 +37,13 @@ export class UserController {
     }
 
 
-    @UseGuards(RolesGuard)
-    @Roles(Role.User)
-    @Get('profile')
-    getProfile(@Request() req) {
-        console.log("request", req.user)
-        console.log("Controller me req kya haii?:", req.user, "or id ye haii", req._id);
-        return this.studentService.getProfile(req.user.sub)
-    }
+    @UseGuards(AuthGuard)
+  @Get('profile')
+getProfile(@ReqField('id') userId: string   
+) {
+  return {userId};
+}
+    
 
     @UseGuards(AuthGuard)
     @Put('update')

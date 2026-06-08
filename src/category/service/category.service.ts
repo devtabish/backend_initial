@@ -47,12 +47,10 @@ export class CategoryService {
         }catch(error){
             throw error
         }
-        
-        
     }
     
 
-    async findall(){
+    async getAllCategory(){
         return await this.categoryRepo.findall();
     }
 

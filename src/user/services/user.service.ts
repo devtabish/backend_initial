@@ -65,23 +65,26 @@ export class UserService {
             if (!userExists) {
                 throw new NotFoundException("user not found, register first")
             }
-            const hash = await bcrypt.hash(data.password, 10)
             console.log("hashed pass", hash)
             // console.log("check this line")
             // const hash = await bcrypt.hash(data.password, 10)
-            const isMatch = await bcrypt.compare(hash, userExists.password)
+            const isMatch = await bcrypt.compare(data.password, userExists.password)
             if (!isMatch) {
                 throw new UnauthorizedException("wrong password")
             }
-            // const userData = userExists.toObject()
-            const payload = { user: userExists};
+            const userData = userExists.toObject()
+            delete userData.password && delete userData._id
+            const payload = { id: userExists.id,
+                email: userExists.email,
+                role: userExists.role
+            };
             const access_token = await this.jwtService.signAsync(payload)
-            // delete userData.password && delete userData._id
+            
             
             
             return {
                 access_token,
-                user: userExists,
+                user: userData,
             };
         }
         catch (error) {
