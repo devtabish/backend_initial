@@ -21,7 +21,7 @@ export class CategoryController {
 
     @Get()
     getall(){
-        return this.categoryService.findall()
+        return this.categoryService.getAllCategory()
     }
 
     @Delete('delete/:categoryId')

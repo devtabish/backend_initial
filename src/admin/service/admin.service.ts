@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common"
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common"
 import { AdminRepository } from "../schema/admin.repo"
 import { AdminDto } from "../../admin/dto/admindto"
 import * as bcrypt from 'bcrypt'
@@ -13,10 +13,22 @@ export class AdminService {
 
 
     async signupAdmin(body: AdminDto){
+
+        const adminCount = await this.adminRepo.countAdmins({ role: 'admin' });
     
-            let hash = await bcrypt.hash(body.password, 10)
-            hash = body.password
-            const adminInfo = await this.adminRepo.createAdmin(body )
+    if (adminCount > 0) {
+        throw new BadRequestException('Registration Forbidden: System already has its own admin');
+    }
+        const findadmin = await this.adminRepo.findbyemail(body.email)
+        if(findadmin){
+            throw new BadRequestException('admin already exists')
+        }
+    
+            const hash = await bcrypt.hash(body.password, 10)
+            const admindata = {
+                ...body, password: hash
+            }
+            const adminInfo = await this.adminRepo.createAdmin(admindata )
             adminInfo.save()
             return {
                     adminInfo, message: "admin created"
@@ -32,8 +44,9 @@ export class AdminService {
                     if (!userExists) {
                         throw new NotFoundException("user not found, register first")
                     }
+                    const isMatch = await bcrypt.compare(data.password, userExists.password)
                     
-                    if (userExists.password !== data.password) {
+                    if (!isMatch) {
                         throw new UnauthorizedException("wrong password")
                     }
                     // const userData = userExists.toObject()
@@ -55,6 +68,22 @@ export class AdminService {
                 }
         
             }
+
+            async deleteCategory(adminId: string){
+                    try{
+                        const findadmin = await this.adminRepo.findbyid(adminId)
+                    if(!findadmin){
+                    throw new NotFoundException('Category not found')
+                }
+                const deleteAdmin = await this.adminRepo.findbyidanddelete(adminId)
+                return {
+                        deleteAdmin,
+                        message: "Admin deleted successfully"
+                    }
+                    }catch(error){
+                        throw error
+                    }
+                }
         
 
     }

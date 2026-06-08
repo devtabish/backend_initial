@@ -46,7 +46,6 @@ async addSubCategory(categoryId: string, body: SubCategoryDto) {
 
   async deleteSubCategory(id:string){
     try{
-
       const findSubcategory = await this.subcategoryRepo.findbyId(id)
       if(!findSubcategory){
         throw new NotFoundException('Id not found')

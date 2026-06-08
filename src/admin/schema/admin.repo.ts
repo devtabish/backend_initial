@@ -19,4 +19,16 @@ export class AdminRepository {
 async findbyemail(email: string): Promise<AdminDocument>{
     return await this.adminModel.findOne({email})
 }
+
+async countAdmins(query: any): Promise<number> {
+  return this.adminModel.countDocuments(query).exec();
+}
+
+async findbyid(id: string): Promise<AdminDocument | null>{
+    return await this.adminModel.findById(id).exec()
+}
+
+async findbyidanddelete(id: string): Promise<AdminDocument | null>{
+    return await this.adminModel.findOneAndDelete({_id:id}).exec()
+}
 }
