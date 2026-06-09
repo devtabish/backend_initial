@@ -65,15 +65,16 @@ export class UserService {
             if (!userExists) {
                 throw new NotFoundException("user not found, register first")
             }
-            console.log("hashed pass", hash)
-            // console.log("check this line")
-            // const hash = await bcrypt.hash(data.password, 10)
+        
+            console.log("check this line")
+            
             const isMatch = await bcrypt.compare(data.password, userExists.password)
             if (!isMatch) {
                 throw new UnauthorizedException("wrong password")
             }
-            const userData = userExists.toObject()
-            delete userData.password && delete userData._id
+            // const hash = await bcrypt.hash(data.password, 10)
+            // const userData = userExists.toObject()
+            // delete userData.password && delete userData._id
             const payload = { id: userExists.id,
                 email: userExists.email,
                 role: userExists.role
@@ -84,7 +85,7 @@ export class UserService {
             
             return {
                 access_token,
-                user: userData,
+                user: userExists,
             };
         }
         catch (error) {

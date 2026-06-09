@@ -5,15 +5,15 @@ import { AdminRepository } from './schema/admin.repo';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AdminSchema } from './schema/admin.schema';
 import { JwtModule } from '@nestjs/jwt';
-import { MYJWT_SECRET } from 'src/constants';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from 'src/auth/authGuard';
+
 
 @Module({
     imports:[MongooseModule.forFeature([{name:'Admin', schema: AdminSchema}]),
     JwtModule.register({ 
             global : true,
-            secret: MYJWT_SECRET.secret
+            secret: process.env.MYJWT_SECRET as string
         
     })
 ],

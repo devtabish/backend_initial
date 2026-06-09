@@ -8,13 +8,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthGuard } from 'src/auth/authGuard';
 import { APP_GUARD } from '@nestjs/core';
-import { MYJWT_SECRET } from 'src/constants';
 
 @Module({
     imports:[MongooseModule.forFeature([{name:'User', schema: UserSchema}]),
     JwtModule.register({ 
             global : true,
-            secret: MYJWT_SECRET.secret
+            secret: process.env.MYJWT_SECRET as string
         
     })
 ],

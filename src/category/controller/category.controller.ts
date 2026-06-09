@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Request, UseGuards } from "@nestjs/common";
 import { CategoryService } from "../service/category.service";
-import { Public } from "src/customkey";
+import { Public } from "customkey";
 import { CategoryDto } from "../dto/category.dto";
 import { AuthGuard } from "src/auth/authGuard";
 import { CategoryIdDto } from "../dto/CategoryId.dto";
