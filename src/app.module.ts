@@ -13,7 +13,8 @@ import { SubCategoryModule } from './category/subcategory.module';
 
 @Module({
   imports: [ConfigModule.forRoot({isGlobal:true,}),
-    MongooseModule.forRoot(process.env.MONGO_URI as string), UserModule,AdminModule,CategoryModule, SubCategoryModule
+    MongooseModule.forRoot(process.env.MONGO_URI as string), UserModule,AdminModule,CategoryModule, SubCategoryModule,
+    ConfigModule.forRoot({ isGlobal: true }),
 ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,5 +1,5 @@
 import { Controller, Post, Body, UseGuards, Param, Delete } from "@nestjs/common";
-import { Public } from "src/customkey";
+import { Public } from "customkey";
 import { AdminService } from "../service/admin.service";
 import { AdminDto } from "src/admin/dto/admindto";
 import { Roles } from "src/Roles/roles.decorator";

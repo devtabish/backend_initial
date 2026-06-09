@@ -7,7 +7,7 @@ import { IS_PUBLIC_KEY } from "customkey";
 
 
 @Injectable()
-export class AdminAuthGuard implements CanActivate{
+export class UserAuthGuard implements CanActivate{
     constructor(private readonly jwtService: JwtService, private reflector: Reflector){}
 
     async canActivate(
@@ -20,6 +20,6 @@ export class AdminAuthGuard implements CanActivate{
             return true
         }
         const request = context.switchToHttp().getRequest();
-        return this.jwtService.verify(request.headers.authorization?.split(' ')[1])?.role === 'admin'
+        return this.jwtService.verify(request.headers.authorization?.split(' ')[1])?.role === 'user'
     }
 }

@@ -4,7 +4,6 @@ import { AuthGuard } from "src/auth/authGuard";
 import { forwardRef, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { JwtModule } from "@nestjs/jwt";
-import { MYJWT_SECRET } from "src/constants";
 import { SubCategorySchema } from "./subCategories/schema/subcategory.schema";
 import { SubCategoryRepository } from "./subCategories/schema/subcategory.Repo";
 import { SubCategoryController } from "./subCategories/controller/subcategory.controller";
@@ -20,7 +19,7 @@ import { CategorySchema } from "./schema/category.schema";
     ]),
     JwtModule.register({ 
             global : true,
-            secret: MYJWT_SECRET.secret
+            secret: process.env.MYJWT_SECRET as string
         
     }), forwardRef(()=> CategoryModule)
 ],

@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Put, Q
 import { UserService } from 'src/user/services/user.service';
 import { UserDto } from '../dto/user.dto';
 import { AuthGuard } from 'src/auth/authGuard';
-import { Public } from 'src/customkey';
+import { Public } from 'customkey';
 import { Request } from '@nestjs/common';
 import { LoginDto } from '../dto/loginDto';
 import { UpdateUserDto } from '../dto/updatedataDto';
@@ -12,6 +12,7 @@ import { Roles } from 'src/Roles/roles.decorator';
 import { RolesGuard } from 'src/Roles/roles.guard';
 import { Role } from 'src/Roles/role.enum';
 import { ReqField } from 'src/auth/auth.decorator';
+import { UserAuthGuard } from 'src/auth/userAuthguard';
 
 @Controller('user')
 export class UserController {
@@ -55,7 +56,8 @@ getProfile(@ReqField('id') userId: string
         return updated;
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard, UserAuthGuard)
+    @Roles(Role.User)
     @Patch('/')
     updatePass(
         @Body() body: UpdatePasswordDto, @Request() req) {
