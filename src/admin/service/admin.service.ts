@@ -50,7 +50,7 @@ export class AdminService {
                         throw new UnauthorizedException("wrong password")
                     }
                     // const userData = userExists.toObject()
-                    const payload = { user: userExists};
+                    const payload = { id: userExists.id, email: userExists.email, role: userExists.role};
                     const access_token = await this.jwtService.signAsync(payload)
                     // delete userData.password && delete userData._id
                     

@@ -25,11 +25,6 @@ import { CategorySchema } from "./schema/category.schema";
 ],
     
     providers: [SubCategoryService, SubCategoryRepository,
-
-  {
-    provide: APP_GUARD,
-    useClass: AuthGuard,
-  },
 ],
 exports: [SubCategoryRepository],
     controllers: [SubCategoryController]
