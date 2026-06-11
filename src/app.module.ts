@@ -8,6 +8,8 @@ import { UserMiddleware } from './user/middleware/user.middleware';
 import { AdminModule } from './admin/admin.module';
 import { CategoryModule } from './category/category.module';
 import { SubCategoryModule } from './category/subcategory.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/authGuard';
 
 
 
@@ -17,7 +19,12 @@ import { SubCategoryModule } from './category/subcategory.module';
     ConfigModule.forRoot({ isGlobal: true }),
 ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+     {
+        provide: APP_GUARD,
+        useClass: AuthGuard,
+      },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -23,12 +23,7 @@ import { SubCategoryModule } from "./subcategory.module";
     }), forwardRef(()=> SubCategoryModule)
 ],
     
-    providers: [CategoryService, CategoryRepository, 
-
-  {
-    provide: APP_GUARD,
-    useClass: AuthGuard,
-  },
+    providers: [CategoryService, CategoryRepository,
 ],
 exports: [CategoryRepository],
     controllers: [CategoryController]

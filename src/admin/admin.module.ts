@@ -18,12 +18,7 @@ import { AuthGuard } from 'src/auth/authGuard';
     })
 ],
     
-    providers: [AdminService, AdminRepository, 
-
-  {
-    provide: APP_GUARD,
-    useClass: AuthGuard,
-  },
+    providers: [AdminService, AdminRepository,
 ],
     controllers: [AdminController]
 })
